@@ -1,26 +1,80 @@
-class Piece:
+# singleton class
+# state / mementon
+# template 
+# command 
 
-    def __init__(self, value="0 "):
-        self.value = value
+class BoardSquare:
+
+    def __init__(self, piece=None, has_worker=False):
+        self.piece = piece
+        self.has_worker = has_worker
 
     def __str__(self):
-        return str(self.value)
+        if self.piece:
+            return str(self.piece)
+        else:
+            return "0 "
     
     def __repr__(self):
-        return str(self.value)
+        if self.piece:
+            return str(self.piece)
+        else:
+            return "0 "
+    
+class GamePiece:
+    def __init__(self, label, owner) -> None:
+        self.label = label
+        self.owner = owner
 
+    def __str__(self):
+        return self.label
+    
+class Worker(GamePiece):
+
+    def __init__(self, label):
+        super().__init__(label=label)
+
+class Block(GamePiece):
+    
+    def __init__(self):
+        super().__init__(label="1")
+        self.height = 1
+        
+    def build_level(self):
+        if self.height < 3:
+            self.height += 1 
+    
 class Santorini:
 
-    def __init__(self, players: int): 
+    instance_count = 0
+
+    def __init__(self): 
+
+        if self.instance_count > 0:
+            print("game is already in progress!")
+            return 
         
         self.board = [
-            [Piece(), Piece(), Piece(), Piece(), Piece()],
-            [Piece(), Piece("0Y"), Piece(), Piece("0B"), Piece()],
-            [Piece(), Piece(), Piece(), Piece(), Piece()],
-            [Piece(), Piece("OA"), Piece(), Piece("0Z"), Piece()],
-            [Piece(), Piece(), Piece(), Piece(), Piece()],
+            [BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare()],
+            [BoardSquare(), BoardSquare(piece=Worker(label="0Y")), BoardSquare(), BoardSquare(piece=Worker(label="0B")), BoardSquare()],
+            [BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare()],
+            [BoardSquare(), BoardSquare(piece=Worker(label="0A")), BoardSquare(), BoardSquare(piece=Worker(label="0Z")), BoardSquare()],
+            [BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare()],
         ]
 
+    def isWinner(self):
+        for row in self.board:
+            for square in row:
+                if isinstance(square.piece, Block):
+                    if square.piece.height == 3:
+                        return [True, square.piece.owner]
+                    
+        return [False, 0]
+
+    def play(self):
+
+        while not self.isWinner()[0]:
+            pass
 
     def __str__(self):
 
@@ -32,7 +86,7 @@ class Santorini:
 
             for square in row:
 
-                string_obj += (f"|{square.value}")
+                string_obj += (f"|{square}")
 
             string_obj += "|"
             string_obj += "\n"
