@@ -1,138 +1,142 @@
 # state / mementon - undo/redo
 # strategy - type of player 
+# iterator - board?
+# decorator - somewhere :
+
 # abstract factory, composite (?)
 
-from GamePiece import Worker, Block
-from GameAction import QueryPlayer, PrintBoard, Turn, Move
+from GameComponent import Board, Direction, Worker, DIRECTIONS
+from GameActions import Turn, Move
+from Player import Player 
+from exceptions import InvalidWorker, NotYourWorker, InvalidDirection, InvalidMovementDirection, InvalidBuildDirection
+from GamePiece import GamePiece
+from constants import TEXT_DIR_TO_NUM
 
-class Player:
+# strategy pattern, implement the same methods
+class SantoriniRandom:
+    pass
 
-    def __init__(self, board, color, workers) -> None:
-        self.board = board
-        self.color = color
-        self.workers = workers
-
-    def can_move():
-        pass
-
-class BoardSquare:
-
-    def __init__(self, piece=None):
-        self.piece = piece
-
-    def __str__(self):
-        if self.piece:
-            return str(self.piece)
-        else:
-            return "0 "
-    
-    def __repr__(self):
-        if self.piece:
-            return str(self.piece)
-        else:
-            return "0 "
-        
-class Board:
-
-    def __init__(self) -> None:
-
-        self.board = [
-            [BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare()],
-            [BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare()],
-            [BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare()],
-            [BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare()],
-            [BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare()],
-        ]
-
-        self.row_ind = 0
-        self.col_ind = 0
-        self.max_row = len(self.board)
-        self.max_col = len(self.board[0])
-
-        self.board[1][3].piece = Worker(label="0B", owner="blue", coords=[1, 3], board=self.board)
-        self.board[1][1].piece = Worker(label="0Y", owner='blue', coords=[1, 1], board=self.board)
-        self.board[3][1].piece = Worker(label="0A", owner="white", coords=[3, 1], board=self.board)
-        self.board[3][3].piece = Worker(label="0Z", owner="white", coords=[3, 3], board=self.board)
-
-    def __iter__(self):
-        return self
-    
-    def __next__(self):
-        
-        if self.row_ind >= self.max_row:
-            raise StopIteration
-        
-        value = self.board[self.row_ind][self.col_ind]
-        self.col_ind += 1
-
-        if self.col_ind >= self.max_col:
-            self.col_ind = 0
-            self.row_ind += 1
-
-        return value
-
-    def __repr__(self) -> str:
-        
-        string_obj = ""
-         
-        for row in self.board:
-
-            string_obj += ("+--" * len(row) + "+" + "\n") 
-
-            for square in row:
-
-                string_obj += (f"|{square}")
-
-            string_obj += "|"
-            string_obj += "\n"
-        
-        string_obj += ("+--" * len(row) + "+")
-
-        return string_obj
-
-    def __str__(self) -> str:
-        return repr(self)
-    
-    def __getitem__(self, inds):
-        row, col = inds
-        return self.board[row][col]
+class SantoriniHeurisitic:
+    pass
 
 class Santorini:
 
     def __init__(self): 
         self.board : Board = Board()
         self.current_turn : Turn = None
+        self.current_player : Player = None
+
+        self.worker_Y = self.board[1, 1].piece
+        self.worker_B = self.board[1, 3].piece
+        self.worker_A = self.board[3, 1].piece
+        self.worker_Z = self.board[3, 3].piece 
+
+        self.players = [
+            Player(board=self.board, color="blue", workers=[self.worker_Y, self.worker_Z]),
+            Player(board=self.board, color="white", workers=[self.worker_A, self.worker_B])
+        ]
 
     def isWinner(self):
         for ele in self.board:
-            if isinstance(ele.piece, Block):
-                if ele.piece.height == 3:
+            if isinstance(ele, GamePiece) and ele.piece.height == 3:
                     return [True, ele.piece.owner]
                     
-        return [False, 0]
+        return [False, None]
     
     def print_round(self):
         print(self.current_turn)
         print(self.board)
 
     def play(self):
-        self.current_turn = Turn(player=1)
+        self.current_turn = Turn(player=self.players[0])
         self.print_round()
-
+        self.current_player = self.players[0]
+        invalid_worker = True
+        invalid_move_dir = True
+        invalid_build_dir = True
+        
         while not self.isWinner()[0]:
             
-            moved_worker = input("Select a worker to move \n")
-            move_dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw) \n")
-            build_dir = input("Select a direction to build (n, ne, e, se, s, sw, w, nw) \n")
-            
-            print(Move(moved_worker, move_dir, build_dir))
+            while invalid_worker:
+                try:
+                    inputted_worker : Worker = input("Select a worker to move \n")
 
-            if self.current_turn.player == 1:
-                self.current_turn = Turn(player=2)
+                    if inputted_worker != "A" and inputted_worker != "B" and inputted_worker != "Y" and inputted_worker != "Z":
+                        raise InvalidWorker  
+
+                    if not inputted_worker == self.current_player.workers[0].label and not inputted_worker == self.current_player.workers[1].label :
+                        raise NotYourWorker
+                    
+                    invalid_worker = False
+                    
+                    if inputted_worker == "A":
+                        inputted_worker = self.worker_A
+                    elif inputted_worker == "B":
+                        inputted_worker = self.worker_B
+                    elif inputted_worker == "Y":
+                        inputted_worker = self.worker_Y
+                    else:
+                        inputted_worker = self.worker_Z
+
+                except InvalidWorker:
+                    print("Not a valid worker")
+                except NotYourWorker:
+                    print("That is not your worker")
+            
+            valid_move_directions = self.board.generate_valid_move_dirs(inputted_worker.coords)
+
+            while invalid_move_dir:
+                try:
+                    move_dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw) \n")
+
+                    if move_dir not in DIRECTIONS:
+                        raise InvalidDirection
+                    if move_dir not in valid_move_directions:
+                        raise InvalidMovementDirection
+                    
+                    invalid_move_dir = False
+                
+                except InvalidDirection:
+                    print("Not a valid direction")
+                except InvalidMovementDirection:
+                    print(f"Cannot move {move_dir}")
+
+            while invalid_build_dir:
+
+                try:
+
+                    build_dir = input("Select a direction to build (n, ne, e, se, s, sw, w, nw) \n")
+                    valid_build_directions = self.board.generate_valid_build_dirs([sum(x) for x in zip(inputted_worker.coords, TEXT_DIR_TO_NUM[build_dir])])
+
+                    if build_dir not in DIRECTIONS:
+                        raise InvalidDirection
+                    if build_dir not in valid_build_directions:
+                        raise InvalidMovementDirection
+                    
+                    invalid_build_dir = False
+                    
+                except InvalidDirection:
+                    print("Not a valid direction")
+                except InvalidBuildDirection:
+                    print(f"Cannot build {build_dir}")
+                
+            made_move = Move(inputted_worker, move_dir, build_dir)
+
+            self.board.move_worker(inputted_worker, num_move_dir=made_move.num_move_dir)
+            self.board.build(inputted_worker, build_dir=made_move.num_build_dir)
+
+            if self.current_player.color == "blue":
+                self.current_turn = Turn(player=self.players[1])
+                self.current_player = self.players[1]
             else:
-                self.current_turn = Turn(player=1)
+                self.current_turn = Turn(player=self.players[0])
+                self.current_player = self.players[0]
 
             self.print_round()
+            invalid_build_dir = True
+            invalid_move_dir = True
+            invalid_worker = True
+            
 
        
     
