@@ -5,10 +5,10 @@
 
 # abstract factory, composite (?)
 
-from GameComponent import Board, Direction, Worker, DIRECTIONS
+from GameComponent import Board, BoardSquare, Direction, Worker, DIRECTIONS
 from GameActions import Turn, Move
 from Player import Player 
-from exceptions import InvalidWorker, NotYourWorker, InvalidDirection, InvalidMovementDirection, InvalidBuildDirection
+from exceptions import InvalidWorker, NotYourWorker, InvalidDirection, InvalidMovementDirection, InvalidBuildDirection, WorkerCannotMove
 from GamePiece import GamePiece
 from constants import TEXT_DIR_TO_NUM
 
@@ -31,16 +31,22 @@ class Santorini:
         self.worker_A = self.board[3, 1].piece
         self.worker_Z = self.board[3, 3].piece 
 
+        self.winner = None
+
         self.players = [
             Player(board=self.board, color="blue", workers=[self.worker_Y, self.worker_Z]),
             Player(board=self.board, color="white", workers=[self.worker_A, self.worker_B])
         ]
 
     def isWinner(self):
+
+        if not any(worker.can_move() for worker in self.current_player.workers):
+            return [True, None]
+
         for ele in self.board:
-            if isinstance(ele, GamePiece) and ele.piece.height == 3:
+            if isinstance(ele, BoardSquare) and ele.height == 3:
                     return [True, ele.piece.owner]
-                    
+        
         return [False, None]
     
     def print_round(self):
@@ -56,7 +62,7 @@ class Santorini:
         invalid_build_dir = True
         
         while not self.isWinner()[0]:
-            
+
             while invalid_worker:
                 try:
                     inputted_worker : Worker = input("Select a worker to move \n")
@@ -67,8 +73,6 @@ class Santorini:
                     if not inputted_worker == self.current_player.workers[0].label and not inputted_worker == self.current_player.workers[1].label :
                         raise NotYourWorker
                     
-                    invalid_worker = False
-                    
                     if inputted_worker == "A":
                         inputted_worker = self.worker_A
                     elif inputted_worker == "B":
@@ -77,11 +81,18 @@ class Santorini:
                         inputted_worker = self.worker_Y
                     else:
                         inputted_worker = self.worker_Z
-
+                    
+                    if not inputted_worker.can_move():
+                        raise WorkerCannotMove
+                    
+                    invalid_worker = False
+                
                 except InvalidWorker:
                     print("Not a valid worker")
                 except NotYourWorker:
                     print("That is not your worker")
+                except WorkerCannotMove:
+                    print("That worker cannot move")
             
             valid_move_directions = self.board.generate_valid_move_dirs(inputted_worker.coords)
 
@@ -106,12 +117,14 @@ class Santorini:
                 try:
 
                     build_dir = input("Select a direction to build (n, ne, e, se, s, sw, w, nw) \n")
-                    valid_build_directions = self.board.generate_valid_build_dirs([sum(x) for x in zip(inputted_worker.coords, TEXT_DIR_TO_NUM[build_dir])])
+                    
+                    print([sum(x) for x in zip(inputted_worker.coords, TEXT_DIR_TO_NUM[build_dir])])
+                    valid_build_directions = self.board.generate_valid_build_dirs([sum(x) for x in zip(inputted_worker.coords, TEXT_DIR_TO_NUM[move_dir])])
 
                     if build_dir not in DIRECTIONS:
                         raise InvalidDirection
                     if build_dir not in valid_build_directions:
-                        raise InvalidMovementDirection
+                        raise InvalidBuildDirection
                     
                     invalid_build_dir = False
                     

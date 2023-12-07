@@ -1,5 +1,5 @@
 from GamePiece import Worker, GamePiece
-from constants import COLUMN_COUNT, ROW_COUNT, TEXT_DIR_TO_NUM
+from constants import COLUMN_COUNT, ROW_COUNT, TEXT_DIR_TO_NUM, MAX_HEIGHT
 from enum import Enum
 
 class Direction(Enum):
@@ -54,15 +54,14 @@ class Board:
         self.max_row = len(self.board)
         self.max_col = len(self.board[0])
 
-        self.board[1][3].piece = Worker(label="B", owner="blue", coords=[1, 3], board=self.board)
-        self.board[1][1].piece = Worker(label="Y", owner='blue', coords=[1, 1], board=self.board)
-        self.board[3][1].piece = Worker(label="A", owner="white", coords=[3, 1], board=self.board)
-        self.board[3][3].piece = Worker(label="Z", owner="white", coords=[3, 3], board=self.board)
+        self.board[1][3].piece = Worker(label="B", owner="blue", coords=[1, 3], board=self)
+        self.board[1][1].piece = Worker(label="Y", owner='blue', coords=[1, 1], board=self)
+        self.board[3][1].piece = Worker(label="A", owner="white", coords=[3, 1], board=self)
+        self.board[3][3].piece = Worker(label="Z", owner="white", coords=[3, 3], board=self)
 
     def move_worker(self, worker : Worker, num_move_dir):
         old_x, old_y = worker.coords 
 
-        print(num_move_dir)
         x_move, y_move = num_move_dir
 
         self.board[old_x][old_y].piece = None
@@ -78,50 +77,65 @@ class Board:
 
     def generate_valid_move_dirs(self, coords):
 
-        old_x, old_y = coords
+        r, c = coords
 
         valid_piece_move_dirs : [Direction] = []
 
         # generate the valid piece moves
-        if old_x + 1 < COLUMN_COUNT and abs(self.board[old_x + 1][old_y].height - self.board[old_x][old_y].height) < 1:
-            valid_piece_move_dirs.append("e")
-        
-        if old_x - 1 >= 0  and abs(self.board[old_x - 1][old_y].height - self.board[old_x][old_y].height) < 1:
-            valid_piece_move_dirs.append("w")
-        if old_y - 1 >= 0 and abs(self.board[old_x][old_y - 1].height - self.board[old_x][old_y].height) < 1:
+        if (r + 1 < ROW_COUNT and 
+            self.board[r + 1][c].height < MAX_HEIGHT and 
+            abs(self.board[r + 1][c].height - self.board[r][c].height) < 1 and
+            not self.board[r + 1][c].piece 
+        ):
             valid_piece_move_dirs.append("s")
-        if old_y + 1 < ROW_COUNT and abs(self.board[old_x][old_y + 1].height - self.board[old_x][old_y].height) < 1:
+
+        if (r - 1 >= 0 and 
+            self.board[r - 1][c].height < MAX_HEIGHT and 
+            abs(self.board[r - 1][c].height - self.board[r][c].height) < 1 and
+            not self.board[r - 1][c].piece 
+        ):
             valid_piece_move_dirs.append("n")
+        
+        if (c - 1 >= 0 and 
+            self.board[r][c - 1].height < MAX_HEIGHT and 
+            abs(self.board[r][c - 1].height - self.board[r][c].height) < 1 and
+            not self.board[r][c - 1].piece 
+        ):
+            valid_piece_move_dirs.append("w")
 
-        if "n" in valid_piece_move_dirs and "e" in valid_piece_move_dirs and abs(self.board[old_x + 1][old_y + 1].height - self.board[old_x][old_y].height) < 1:
+        if (c + 1 < COLUMN_COUNT and 
+            self.board[r][c + 1].height < MAX_HEIGHT and 
+            abs(self.board[r][c + 1].height - self.board[r][c].height) < 1 and
+            not self.board[r][c + 1].piece 
+        ):
+            valid_piece_move_dirs.append("e")
+
+        if "n" in valid_piece_move_dirs and "e" in valid_piece_move_dirs and abs(self.board[r + 1][c + 1].height - self.board[r][c].height) < 1:
             valid_piece_move_dirs.append("ne")
-        if "n" in valid_piece_move_dirs and "w" in valid_piece_move_dirs and abs(self.board[old_x - 1][old_y + 1].height - self.board[old_x][old_y].height) < 1:
+        if "n" in valid_piece_move_dirs and "w" in valid_piece_move_dirs and abs(self.board[r - 1][c + 1].height - self.board[r][c].height) < 1:
             valid_piece_move_dirs.append("nw")
-        if "s" in valid_piece_move_dirs and "w" in valid_piece_move_dirs and abs(self.board[old_x - 1][old_y - 1].height - self.board[old_x][old_y].height) < 1:
+        if "s" in valid_piece_move_dirs and "w" in valid_piece_move_dirs and abs(self.board[r - 1][c - 1].height - self.board[r][c].height) < 1:
             valid_piece_move_dirs.append("sw")
-        if "s" in valid_piece_move_dirs and "e" in valid_piece_move_dirs and abs(self.board[old_x + 1][old_y - 1].height - self.board[old_x][old_y].height) < 1:
+        if "s" in valid_piece_move_dirs and "e" in valid_piece_move_dirs and abs(self.board[r + 1][c - 1].height - self.board[r][c].height) < 1:
             valid_piece_move_dirs.append("se")
-
-        print(valid_piece_move_dirs)
 
         return valid_piece_move_dirs
 
     def generate_valid_build_dirs(self, coords):
-        print(coords)
 
-        old_x, old_y = coords
+        r, c = coords
+
 
         valid_piece_build_dirs : [Direction] = []
 
-        # generate the valid piece moves
-        if old_x + 1 < COLUMN_COUNT :
-            valid_piece_build_dirs.append("e")
-        if old_x - 1 >= 0  :
-            valid_piece_build_dirs.append("w")
-        if old_y - 1 >= 0 :
+        if r + 1 < COLUMN_COUNT :
             valid_piece_build_dirs.append("s")
-        if old_y + 1 < ROW_COUNT :
+        if r - 1 >= 0  :
             valid_piece_build_dirs.append("n")
+        if c + 1 < COLUMN_COUNT:
+            valid_piece_build_dirs.append("e")
+        if c - 1 >= 0 :
+            valid_piece_build_dirs.append("w")
 
         if "n" in valid_piece_build_dirs and "e" in valid_piece_build_dirs:
             valid_piece_build_dirs.append("ne")

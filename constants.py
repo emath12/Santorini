@@ -11,3 +11,5 @@ TEXT_DIR_TO_NUM = {
     "sw" : [1 , -1],
     "se" : [1, 1]
 }
+
+MAX_HEIGHT = 3 

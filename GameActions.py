@@ -8,7 +8,7 @@ class Turn:
         self.player : 'Player' = player
         Turn.current_turn += 1 
         
-        if str(player) == "1":
+        if player.color == "white":
             self.avail_workers = "AB"
             self.color = "white"
         else:

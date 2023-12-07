@@ -17,3 +17,7 @@ class InvalidMovementDirection(BaseException):
 class InvalidBuildDirection(BaseException):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
+
+class WorkerCannotMove(BaseException):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)

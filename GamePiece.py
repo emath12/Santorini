@@ -20,14 +20,15 @@ class Worker(GamePiece):
         super().__init__(label=label, owner=owner, coords=coords, board=board)
 
     def can_move(self):
-        pass
+        
+        return self.generate_valid_moves(self.coords) != []
 
     def generate_valid_moves(self, coords):
         valid_moves : [Move]  = []
 
         valid_worker_movements = self.board.generate_valid_move_dirs(coords)
         for vw in valid_worker_movements:
-            valid_worker_builds = self.board.gennerate_valid_build_dirs(coords + TEXT_DIR_TO_NUM[vw])
+            valid_worker_builds = self.board.generate_valid_build_dirs([sum(x) for x in zip(coords, TEXT_DIR_TO_NUM[vw])])
             for vb in valid_worker_builds:
                 valid_moves.append(Move(self, vw, vb))
 
