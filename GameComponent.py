@@ -1,6 +1,7 @@
 from GamePiece import Worker, GamePiece
 from constants import COLUMN_COUNT, ROW_COUNT, TEXT_DIR_TO_NUM, MAX_HEIGHT
 from enum import Enum
+from GameActions import Move
 
 class Direction(Enum):
     NORTH = "n"
@@ -11,9 +12,6 @@ class Direction(Enum):
     NORTH_EAST = "ne"
     SOUTH_EAST = "se"
     SOUTH_WEST = "sw"
-
-DIRECTIONS = ["ne", "n", "e", "se", "sw", "s", "nw", "w"]
-
 
 class BoardSquare:
 
@@ -59,19 +57,19 @@ class Board:
         self.board[3][1].piece = Worker(label="A", owner="white", coords=[3, 1], board=self)
         self.board[3][3].piece = Worker(label="Z", owner="white", coords=[3, 3], board=self)
 
-    def move_worker(self, worker : Worker, num_move_dir):
-        old_x, old_y = worker.coords 
+    def move_worker(self, move : Move):
+        old_x, old_y = move.worker.coords 
 
-        x_move, y_move = num_move_dir
+        x_move, y_move = move.num_move_dir
 
         self.board[old_x][old_y].piece = None
-        self.board[old_x + x_move][old_y + y_move].piece = worker
+        self.board[old_x + x_move][old_y + y_move].piece = move.worker
 
-        worker.coords = [old_x + x_move, old_y + y_move] 
+        move.worker.coords = [old_x + x_move, old_y + y_move] 
 
-    def build(self, worker : Worker, build_dir):
-        worker_x, worker_y = worker.coords
-        x_build, y_build = build_dir
+    def build(self, move : Move):
+        worker_x, worker_y = move.worker.coords
+        x_build, y_build = move.num_build_dir
 
         self.board[worker_x + x_build][worker_y + y_build].build_level()
 
@@ -124,11 +122,9 @@ class Board:
     def generate_valid_build_dirs(self, coords):
 
         r, c = coords
-
-
         valid_piece_build_dirs : [Direction] = []
 
-        if r + 1 < COLUMN_COUNT :
+        if r + 1 < ROW_COUNT :
             valid_piece_build_dirs.append("s")
         if r - 1 >= 0  :
             valid_piece_build_dirs.append("n")

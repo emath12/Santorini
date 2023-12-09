@@ -13,3 +13,6 @@ TEXT_DIR_TO_NUM = {
 }
 
 MAX_HEIGHT = 3 
+
+DIRECTIONS = ["ne", "n", "e", "se", "sw", "s", "nw", "w"]
+

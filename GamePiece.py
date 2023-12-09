@@ -16,7 +16,7 @@ class GamePiece:
     
 class Worker(GamePiece):
 
-    def __init__(self, label, owner, coords, board):
+    def __init__(self, label, owner, coords, board=None):
         super().__init__(label=label, owner=owner, coords=coords, board=board)
 
     def can_move(self):
