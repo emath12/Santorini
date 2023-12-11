@@ -111,11 +111,13 @@ class Santorini:
         play_again = input("Play again?\n")
 
         if play_again == "yes":
-            Santorini(player_1_type=self.player_1_type, 
+            s = Santorini(player_1_type=self.player_1_type, 
                       player_2_type=self.player_2_type, 
                       undo_redo_enabled=self.undo_redo_enabled,
                       enabled_display_score=self.enabled_display_score
             )
+
+            s.play()
         else:
             sys.exit()
         

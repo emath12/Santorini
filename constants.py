@@ -13,7 +13,8 @@ TEXT_DIR_TO_NUM = {
     "-" : [0, 0]
 }
 
-MAX_HEIGHT = 3 
+MAX_HEIGHT = 3
+DOME_HEIGHT = 4 
 
 DIRECTIONS = ["ne", "n", "e", "se", "sw", "s", "nw", "w"]
 

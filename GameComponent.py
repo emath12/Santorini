@@ -1,5 +1,5 @@
 from GamePiece import Worker, GamePiece
-from constants import COLUMN_COUNT, ROW_COUNT, TEXT_DIR_TO_NUM, MAX_HEIGHT
+from constants import COLUMN_COUNT, ROW_COUNT, TEXT_DIR_TO_NUM, MAX_HEIGHT, DOME_HEIGHT
 from enum import Enum
 from GameActions import Move
 import copy
@@ -121,7 +121,6 @@ class Board:
                 0 <= new_r < ROW_COUNT
                 and 0 <= new_c < COLUMN_COUNT
                 and self.board[new_r][new_c].height <= MAX_HEIGHT
-                and self.board[r][c].height - self.board[new_r][new_c].height <= 1
                 and self.board[r][c].height - self.board[new_r][new_c].height >= -1
                 and not self.board[new_r][new_c].piece
             ):
@@ -144,8 +143,9 @@ class Board:
             if (0 <= new_r < ROW_COUNT and 
                 0 <= new_c < COLUMN_COUNT and 
                 self.board[new_r][new_c].piece == None and
-                self.board[new_r][new_c].height < MAX_HEIGHT
-                ):
+                self.board[new_r][new_c].height <= DOME_HEIGHT
+                ):  
+                
                 valid_piece_build_dirs.append(dir_str)
 
         return valid_piece_build_dirs
