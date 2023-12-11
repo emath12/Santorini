@@ -108,7 +108,7 @@ class Santorini:
         else:
             print("blue has won")
         
-        play_again = input("Play Again?\n")
+        play_again = input("Play again?\n")
 
         if play_again == "yes":
             Santorini(player_1_type=self.player_1_type, 
