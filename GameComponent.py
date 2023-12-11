@@ -155,6 +155,8 @@ class Board:
     def __next__(self):
         
         if self.row_ind >= self.max_row:
+            self.row_ind = 0
+            self.col_ind = 0
             raise StopIteration
         
         value = self.board[self.row_ind][self.col_ind]

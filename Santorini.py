@@ -15,6 +15,7 @@ from exceptions import InvalidWorker, NotYourWorker, InvalidDirection, InvalidMo
 from constants import *
 from Player import PlayerType
 import copy
+import sys
 
 class Santorini:
 
@@ -22,6 +23,8 @@ class Santorini:
         self.board : Board = Board()
         self.current_turn : Turn = None
         self.current_player : Player = None
+        self.player_1_type = player_1_type
+        self.player_2_type = player_2_type
 
         self.worker_Y = self.board[1, 1].piece
         self.worker_B = self.board[1, 3].piece
@@ -54,7 +57,7 @@ class Santorini:
             return [True, None]
 
         for index, ele in self.board:
-            if ele.height == 3:
+            if ele.height == 3 and ele.piece:
                 return [True, ele.piece.owner]
         
         return [False, None]
@@ -78,12 +81,15 @@ class Santorini:
         self.current_player : Player = self.players[0]
         # self.print_round()
         
-        while not self.isWinner()[0]:
+        while True:            
 
             self.print_round()
-            
+
+            if self.isWinner()[0]:
+                break
+
             made_move = self.current_player.make_move()
-            
+
             if self.enabled_display_score:
                 print(made_move, end = " ")
                 print(made_move.move_score)
@@ -97,11 +103,21 @@ class Santorini:
                 self.current_turn = Turn(player=self.players[1])
                 self.current_player = self.players[1]
 
-       
         if self.current_player.color == "blue":
             print("white has won")
         else:
             print("blue has won")
+        
+        play_again = input("Play Again?\n")
+
+        if play_again == "yes":
+            Santorini(player_1_type=self.player_1_type, 
+                      player_2_type=self.player_2_type, 
+                      undo_redo_enabled=self.undo_redo_enabled,
+                      enabled_display_score=self.enabled_display_score
+            )
+        else:
+            sys.exit()
         
 
     def __deepcopy__(self, memo):
