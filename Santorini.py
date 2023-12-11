@@ -1,8 +1,9 @@
 # state / mementon - undo/redo
 # strategy - type of Santontoi Game
-# decorator - somewhere :
+# decorator - print_round for args :
 # template - execute play + diff games imp it
-# turn - singleton
+
+
 
 
 # abstract factory, composite (?)
@@ -13,6 +14,7 @@ from Player import Player, HeurisiticPlayer, RandomPlayer
 from exceptions import InvalidWorker, NotYourWorker, InvalidDirection, InvalidMovementDirection, InvalidBuildDirection, WorkerCannotMove
 from constants import *
 from Player import PlayerType
+import copy
 
 class Santorini:
 
@@ -63,7 +65,7 @@ class Santorini:
         self.current_player.get_my_score()
 
         if self.enabled_display_score:
-            print(self.current_turn, end = " ")
+            print(self.current_turn, end = ", ")
             print(self.current_player.score)
         else:
             print(self.current_turn)
@@ -99,4 +101,12 @@ class Santorini:
             print("white has won")
         else:
             print("blue has won")
-                   
+        
+
+    def __deepcopy__(self, memo):
+        
+        new_board = copy.deepcopy(self.board)
+
+        Santorini(
+            board=new_board,
+        )

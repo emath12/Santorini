@@ -16,6 +16,9 @@ class Turn:
             self.avail_workers = "YZ"
             self.color = "blue"
 
+    # def __deepcopy__(self):
+    #     return Turn(player=copy.deepcopy(self.player))
+
     def __repr__(self):
         
         return f"Turn: {Turn.current_turn - 1}, {self.color} ({self.avail_workers})"
