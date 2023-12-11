@@ -6,6 +6,7 @@ class SantoriniState:
             self, 
             board, 
             current_turn, 
+            current_color,
             current_player, 
             player_1_type, 
             player_2_type,
@@ -47,6 +48,7 @@ class SantoriniState:
             self.worker_A.board = self.new_board
             self.worker_B.board = self.new_board
             self.worker_Z.board = self.new_board
+            self.current_color = current_color
 
 class History:
 

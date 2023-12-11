@@ -4,24 +4,19 @@ import copy
 class Turn:
 
     current_turn = 1
+    avail_workers = {
+        "blue" : "YZ",
+        "white" : "AB"
+    }
 
-    def __init__(self, player, last_move_made=None) -> None:
-        self.player : 'Player' = player
-        Turn.current_turn += 1 
+    def __init__(self, color=None) -> None:
+        # Turn.player : 'Player' = player
         
-        if player.color == "white":
-            self.avail_workers = "AB"
-            self.color = "white"
-        else:
-            self.avail_workers = "YZ"
-            self.color = "blue"
-
-    # def __deepcopy__(self):
-    #     return Turn(player=copy.deepcopy(self.player))
+        Turn.color = color
 
     def __repr__(self):
         
-        return f"Turn: {Turn.current_turn - 1}, {self.color} ({self.avail_workers})"
+        return f"Turn: {Turn.current_turn}, {Turn.color} ({Turn.avail_workers[Turn.color]})"
 
 class Move:
     def __init__(self, worker, move_dir, build_dir) -> None:

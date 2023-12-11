@@ -21,8 +21,8 @@ from History import SantoriniState, History
 class Santorini:
 
     def __init__(self, player_1_type, player_2_type, undo_redo_enabled=False, enabled_display_score=False): 
+
         self.board : Board = Board()
-        self._current_turn : Turn = None
         self._current_player : Player = None
         self._player_1_type = player_1_type
         self._player_2_type = player_2_type
@@ -54,6 +54,8 @@ class Santorini:
             self._players.append(HeurisiticPlayer(board=self.board, color="blue", workers=[self._worker_Y, self._worker_Z]))
 
         self._history = History()
+
+        self._current_turn : Turn = Turn(color="white")
 
     def _isWinner(self):
 
@@ -89,9 +91,10 @@ class Santorini:
                 self._print_round()
 
     def play(self):
-        self._current_turn = Turn(
-            player=self._players[0], 
-        )
+        
+        # self._current_turn = Turn(
+        #     player=self._players[0], 
+        # )
 
         self._current_player : Player = self._players[0]
         
@@ -112,11 +115,15 @@ class Santorini:
                 print(made_move)
 
             if self._current_player.color == "blue":
-                self._current_turn = Turn(player=self._players[0])
+                Turn.color = "white"
+                # self._current_turn = Turn(player=self._players[0])
                 self._current_player = self._players[0]
             else:
-                self._current_turn = Turn(player=self._players[1])
+                Turn.color = "blue"
+                # self._current_turn = Turn(player=self._players[1])
                 self._current_player = self._players[1]
+
+            Turn.current_turn += 1
 
         if self._current_player.color == "blue":
             print("white has won")
@@ -143,7 +150,7 @@ class Santorini:
             player_1_type=self._player_1_type,
             player_2_type=self._player_2_type,
             current_turn=self._current_turn.current_turn,
-            current_player=self._current_player,
+            current_player=copy.deepcopy(self._current_player),
             players=copy.deepcopy(self._players),
             board=copy.deepcopy(self.board),
             undo_redo_enabled=self._undo_redo_enabled,
@@ -151,7 +158,8 @@ class Santorini:
             worker_Y=copy.deepcopy(self._worker_Y),
             worker_A=copy.deepcopy(self._worker_A),
             worker_Z=copy.deepcopy(self._worker_Z),
-            worker_B=copy.deepcopy(self._worker_B)
+            worker_B=copy.deepcopy(self._worker_B),
+            current_color=Turn.color
         )
 
         return s
@@ -174,3 +182,4 @@ class Santorini:
         self._worker_Z = s.worker_Z
         self._worker_Y = s.worker_Y
         Turn.current_turn = s.current_turn
+        Turn.color = s.current_player.color
