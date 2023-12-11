@@ -37,7 +37,7 @@ class Move:
         return self.move_score
 
     def __repr__(self) -> str:
-        return f"{self.worker} {self.move_dir} {self.build_dir}"
+        return f"{self.worker},{self.move_dir},{self.build_dir}"
     
 class MoveScore:
     def __init__(self, move: Move):
