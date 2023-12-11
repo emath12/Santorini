@@ -64,10 +64,10 @@ class Board:
             [BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare(), BoardSquare()],
         ]
 
-        self.row_ind = 0
-        self.col_ind = 0
-        self.max_row = len(self.board)
-        self.max_col = len(self.board[0])
+        self._row_ind = 0
+        self._col_ind = 0
+        self._max_row = len(self.board)
+        self._max_col = len(self.board[0])
 
         self.worker_Y = Worker(label="Y", owner='blue', coords=[1, 1], board=self)
         self.worker_B = Worker(label="B", owner="blue", coords=[1, 3], board=self)
@@ -155,18 +155,18 @@ class Board:
     
     def __next__(self):
         
-        if self.row_ind >= self.max_row:
-            self.row_ind = 0
-            self.col_ind = 0
+        if self._row_ind >= self._max_row:
+            self._row_ind = 0
+            self._col_ind = 0
             raise StopIteration
         
-        value = self.board[self.row_ind][self.col_ind]
-        index = (self.row_ind, self.col_ind)
-        self.col_ind += 1
+        value = self.board[self._row_ind][self._col_ind]
+        index = (self._row_ind, self._col_ind)
+        self._col_ind += 1
 
-        if self.col_ind >= self.max_col:
-            self.col_ind = 0
-            self.row_ind += 1
+        if self._col_ind >= self._max_col:
+            self._col_ind = 0
+            self._row_ind += 1
 
         return index, value
 
@@ -210,10 +210,10 @@ class Board:
                 if self.board[r][c].piece:
                     new_board[r, c].piece.board = new_board
 
-        new_board.row_ind = self.row_ind
-        new_board.col_ind = self.col_ind
-        new_board.max_row = self.max_row
-        new_board.max_col = self.max_col
+        new_board._row_ind = self._row_ind
+        new_board._col_ind = self._col_ind
+        new_board._max_row = self._max_row
+        new_board._max_col = self._max_col
 
         new_board.worker_B = copy.deepcopy(self.worker_B)
         new_board.worker_Y = copy.deepcopy(self.worker_Y)

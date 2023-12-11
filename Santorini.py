@@ -21,16 +21,16 @@ from History import SantoriniState, History
 class Santorini:
 
     def __init__(self, player_1_type, player_2_type, undo_redo_enabled=False, enabled_display_score=False): 
-        self._board : Board = Board()
+        self.board : Board = Board()
         self._current_turn : Turn = None
         self._current_player : Player = None
         self._player_1_type = player_1_type
         self._player_2_type = player_2_type
 
-        self._worker_Y = self._board[1, 1].piece
-        self._worker_B = self._board[1, 3].piece
-        self._worker_A = self._board[3, 1].piece
-        self._worker_Z = self._board[3, 3].piece 
+        self._worker_Y = self.board[1, 1].piece
+        self._worker_B = self.board[1, 3].piece
+        self._worker_A = self.board[3, 1].piece
+        self._worker_Z = self.board[3, 3].piece 
 
         self._winner = None
         self._undo_redo_enabled = undo_redo_enabled
@@ -40,18 +40,18 @@ class Santorini:
         self._history = History()
 
         if player_1_type == PlayerType.HUMAN:
-            self._players.append(Player(board=self._board, color="white", workers=[self._worker_A, self._worker_B]))
+            self._players.append(Player(board=self.board, color="white", workers=[self._worker_A, self._worker_B]))
         elif player_1_type == PlayerType.RANDOM:
-            self._players.append(RandomPlayer(board=self._board, color="white", workers=[self._worker_A, self._worker_B]))
+            self._players.append(RandomPlayer(board=self.board, color="white", workers=[self._worker_A, self._worker_B]))
         else:
-            self._players.append(HeurisiticPlayer(board=self._board, color="white", workers=[self._worker_A, self._worker_B]))
+            self._players.append(HeurisiticPlayer(board=self.board, color="white", workers=[self._worker_A, self._worker_B]))
 
         if player_2_type == PlayerType.HUMAN:
-            self._players.append(Player(board=self._board, color="blue", workers=[self._worker_Y, self._worker_Z]))
+            self._players.append(Player(board=self.board, color="blue", workers=[self._worker_Y, self._worker_Z]))
         elif player_2_type == PlayerType.RANDOM:
-            self._players.append(RandomPlayer(board=self._board, color="blue", workers=[self._worker_Y, self._worker_Z]))
+            self._players.append(RandomPlayer(board=self.board, color="blue", workers=[self._worker_Y, self._worker_Z]))
         else:
-            self._players.append(HeurisiticPlayer(board=self._board, color="blue", workers=[self._worker_Y, self._worker_Z]))
+            self._players.append(HeurisiticPlayer(board=self.board, color="blue", workers=[self._worker_Y, self._worker_Z]))
 
         self._history = History()
 
@@ -60,7 +60,7 @@ class Santorini:
         if not any(worker.can_move() for worker in self._current_player.workers):
             return [True, None]
 
-        for index, ele in self._board:
+        for index, ele in self.board:
             if ele.height == 3 and ele.piece:
                 return [True, ele.piece.owner]
         
@@ -68,7 +68,7 @@ class Santorini:
     
     def _print_round(self):
         
-        print(self._board)
+        print(self.board)
         self._current_player.get_my_score()
 
         if self._enabled_display_score:
@@ -88,7 +88,7 @@ class Santorini:
                 self._restore(self._history.pop_history())
                 self._print_round()
 
-    def _play(self):
+    def play(self):
         self._current_turn = Turn(
             player=self._players[0], 
         )
@@ -133,7 +133,7 @@ class Santorini:
             )
 
             Turn.current_turn = 1
-            s._play()
+            s.play()
         else:
             sys.exit()
 
@@ -145,7 +145,7 @@ class Santorini:
             current_turn=self._current_turn.current_turn,
             current_player=self._current_player,
             players=copy.deepcopy(self._players),
-            board=copy.deepcopy(self._board),
+            board=copy.deepcopy(self.board),
             undo_redo_enabled=self._undo_redo_enabled,
             enabled_display_score=self._enabled_display_score,
             worker_Y=copy.deepcopy(self._worker_Y),
@@ -167,9 +167,10 @@ class Santorini:
         if not s:
             return
 
-        self._board = s.new_board
+        self.board = s.new_board
         self._current_player = s.current_player
         self._worker_A = s.worker_A
         self._worker_B = s.worker_B
         self._worker_Z = s.worker_Z
         self._worker_Y = s.worker_Y
+        Turn.current_turn = s.current_turn

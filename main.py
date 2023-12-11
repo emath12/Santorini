@@ -15,7 +15,7 @@ class PlayGame:
         self.game = game
 
     def play(self):
-        self.game._play()
+        self.game.play()
 
 def main():
 
