@@ -121,6 +121,9 @@ class Player:
         {self.workers}
         """
     
+    def __deepcopy__(self, memo):
+        return Player(board=None, color=self.color, workers=None)
+
 class HeurisiticPlayer(Player):
     def __init__(self, board, color, workers) -> None:
         super().__init__(board, color, workers)

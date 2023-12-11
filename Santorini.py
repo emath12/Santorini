@@ -16,6 +16,7 @@ from constants import *
 from Player import PlayerType
 import copy
 import sys
+from History import SantoriniState, History 
 
 class Santorini:
 
@@ -50,7 +51,9 @@ class Santorini:
             self.players.append(RandomPlayer(board=self.board, color="blue", workers=[self.worker_Y, self.worker_Z]))
         else:
             self.players.append(HeurisiticPlayer(board=self.board, color="blue", workers=[self.worker_Y, self.worker_Z]))
-     
+
+        self.history = History()
+
     def isWinner(self):
 
         if not any(worker.can_move() for worker in self.current_player.workers):
@@ -118,9 +121,28 @@ class Santorini:
             )
 
             s.play()
+            Turn.current_turn = 1
         else:
             sys.exit()
-        
+
+    def save(self):
+        SantoriniState(
+            player_1_type=self.player_1_type,
+            player_2_type=self.player_2_type,
+            current_turn=self.current_turn.current_turn,
+            current_player=self.current_player,
+            players=self.players,
+            board=self.board,
+            undo_redo_enabled=self.undo_redo_enabled,
+            enabled_display_score=self.enabled_display_score,
+            worker_Y=self.worker_Y,
+            worker_A=self.worker_A,
+            worker_Z=self.worker_Z,
+            worker_B=self.worker_B
+        )
+
+    def restore():
+        pass
 
     def __deepcopy__(self, memo):
         
