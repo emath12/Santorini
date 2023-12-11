@@ -53,9 +53,9 @@ class Santorini:
         if not any(worker.can_move() for worker in self.current_player.workers):
             return [True, None]
 
-        for ele in self.board:
-            if isinstance(ele, BoardSquare) and ele.height == 3:
-                    return [True, ele.piece.owner]
+        for index, ele in self.board:
+            if ele.height == 3:
+                return [True, ele.piece.owner]
         
         return [False, None]
     
@@ -76,9 +76,11 @@ class Santorini:
         )
 
         self.current_player : Player = self.players[0]
-        self.print_round()
+        # self.print_round()
         
         while not self.isWinner()[0]:
+
+            self.print_round()
             
             made_move = self.current_player.make_move()
             
@@ -95,7 +97,6 @@ class Santorini:
                 self.current_turn = Turn(player=self.players[1])
                 self.current_player = self.players[1]
 
-            self.print_round()
        
         if self.current_player.color == "blue":
             print("white has won")

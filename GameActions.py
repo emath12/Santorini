@@ -31,6 +31,7 @@ class Move:
         self.num_move_dir = TEXT_DIR_TO_NUM[move_dir]
         self.num_build_dir = TEXT_DIR_TO_NUM[build_dir]
         self.move_score = 0
+        self.winning_move = False
 
     def get_move_score(self):
         self.move_score = MoveScore(self)
@@ -127,11 +128,11 @@ class MoveScore:
         self.distance_score = calculate_distance_score()
 
         if new_board[new_moved_worker.coords].height == 3:
-            self.center_score = 9999999
-            self.height_score = 9999999
-            self.distance_score = 999999
+            self.winning_move = True
 
     def get_move_score(self):
+        if self.winning_move:
+            return float("+inf")
         return self.c1*self.height_score + self.c2*self.center_score + self.c3*self.distance_score
         
     def __str__(self) -> str:
