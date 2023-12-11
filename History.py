@@ -68,7 +68,7 @@ class History:
         if not self.history:
             return None
 
-        return self.history.pop(0)
+        return self.history.pop()
     
     def push_history(self, san):
         self.history.append(san)
