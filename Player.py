@@ -40,7 +40,7 @@ class Player:
 
         while invalid_worker:
             try:
-                inputted_worker : Worker = input("Select a worker to move \n")
+                inputted_worker : Worker = input("Select a worker to move\n")
 
                 if inputted_worker != "A" and inputted_worker != "B" and inputted_worker != "Y" and inputted_worker != "Z":
                     raise InvalidWorker  
@@ -72,7 +72,7 @@ class Player:
             
         while invalid_move_dir:
             try:
-                move_dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw) \n")
+                move_dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
 
                 if move_dir not in DIRECTIONS:
                     raise InvalidDirection
@@ -92,7 +92,7 @@ class Player:
 
             try:
 
-                build_dir = input("Select a direction to build (n, ne, e, se, s, sw, w, nw) \n")
+                build_dir = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n")
                 
                 valid_build_directions = self.board.generate_valid_build_dirs(inputted_worker.coords)
 
