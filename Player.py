@@ -3,7 +3,8 @@ from GameComponent import Board
 from GameActions import Move
 from exceptions import *
 from constants import *
-
+import random
+import copy
 class PlayerType:
     HUMAN = 1
     RANDOM = 2
@@ -15,14 +16,21 @@ class Player:
         self.board : Board = board
         self.color : str = color
         self.workers : [Worker] = workers
+        self.score = self.get_my_score()
 
-    def can_move():
+    def check_can_move(self):
         
-        for worker in worker:
+        for worker in self.workers:
             if worker.can_move():
                 return True
         
         return False
+    
+    def get_my_score(self):
+        snapshot_move = Move(self.workers[0], "-", "-")
+        snapshot_move_score = snapshot_move.get_move_score()
+        self.score = snapshot_move_score
+        return snapshot_move_score
     
     def make_move(self) -> Move:
 
@@ -49,7 +57,12 @@ class Player:
                     raise WorkerCannotMove
                 
                 invalid_worker = False
-            
+
+                copy_of_inputted_worker = copy.deepcopy(inputted_worker)
+                copy_of_inputted_worker.board = self.board
+
+                valid_move_directions = self.board.generate_valid_move_dirs(inputted_worker.coords)
+
             except InvalidWorker:
                 print("Not a valid worker")
             except NotYourWorker:
@@ -57,8 +70,6 @@ class Player:
             except WorkerCannotMove:
                 print("That worker cannot move")
             
-            valid_move_directions = self.board.generate_valid_move_dirs(inputted_worker.coords)
-
         while invalid_move_dir:
             try:
                 move_dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw) \n")
@@ -67,6 +78,8 @@ class Player:
                     raise InvalidDirection
                 if move_dir not in valid_move_directions:
                     raise InvalidMovementDirection
+                
+                self.board.move_worker(inputted_worker, move_dir)
                 
                 invalid_move_dir = False
             
@@ -81,22 +94,25 @@ class Player:
 
                 build_dir = input("Select a direction to build (n, ne, e, se, s, sw, w, nw) \n")
                 
-                print([sum(x) for x in zip(inputted_worker.coords, TEXT_DIR_TO_NUM[build_dir])])
-                valid_build_directions = self.board.generate_valid_build_dirs([sum(x) for x in zip(inputted_worker.coords, TEXT_DIR_TO_NUM[move_dir])])
+                valid_build_directions = self.board.generate_valid_build_dirs(inputted_worker.coords)
 
                 if build_dir not in DIRECTIONS:
                     raise InvalidDirection
                 if build_dir not in valid_build_directions:
                     raise InvalidBuildDirection
                 
+                self.board.build(inputted_worker, build_dir)
+
                 invalid_build_dir = False
                 
             except InvalidDirection:
                 print("Not a valid direction")
             except InvalidBuildDirection:
                 print(f"Cannot build {build_dir}")
-                
-        return Move(inputted_worker, move_dir, build_dir)
+        
+        made_move =  Move(copy_of_inputted_worker, move_dir, build_dir)
+        made_move.get_move_score()
+        return made_move
 
     def __str__(self):
 
@@ -106,9 +122,37 @@ class Player:
         """
     
 class HeurisiticPlayer(Player):
-    pass 
+    def __init__(self, board, color, workers) -> None:
+        super().__init__(board, color, workers)
+
+    def make_move(self) -> Move:
+        
+        valid_moves = []
+
+        for worker in self.workers:
+            valid_moves += worker.generate_valid_moves()
+        
+        best_moves = sorted(valid_moves, key=lambda move : move.move_score, reverse=True)
+        
+        return best_moves[0]
 
 class RandomPlayer(Player):
-    pass
 
+    def __init__(self, board, color, workers) -> None:
+        super().__init__(board, color, workers)
+    
+    def make_move(self) -> Move:
 
+        selected_index, selected_worker = random.choice(list(enumerate(self.workers)))
+        
+        valid_moves = selected_worker.generate_valid_moves()
+
+        if not valid_moves:
+            if selected_index == 0:
+                valid_moves = self.workers[1].generate_valid_moves()
+            else:
+                valid_moves = self.workers[0].generate_valid_moves()
+
+        
+        return random.choice(valid_moves)
+    

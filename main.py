@@ -21,11 +21,6 @@ def main():
 
     game = PlayGame()
 
-    # [
-    # Player(board=self.board, color="blue", workers=[self.worker_Y, self.worker_Z]),
-    # Player(board=self.board, color="white", workers=[self.worker_A, self.worker_B])
-    #     ]
-
     parser = argparse.ArgumentParser()
     parser.add_argument("arg1", type=str, default="human")
     parser.add_argument("arg2", type=str, default="human")
@@ -64,10 +59,16 @@ def main():
     elif args.arg4 == "off":
         score_display_enabled = False
 
-    game.set_game(s.Santorini(player_1_type=player_1, player_2_type=player_2, undo_redo_enabled=undo_redo_enabled, enabled_display_score=score_display_enabled))
-    game.play()
 
-    
+    game.set_game(
+        s.Santorini(
+            player_1_type=player_1, 
+            player_2_type=player_2, 
+            undo_redo_enabled=undo_redo_enabled, 
+            enabled_display_score=score_display_enabled
+        )
+    )
+    game.play()
 
 if __name__ == "__main__":
     main()

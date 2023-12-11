@@ -13,6 +13,7 @@ class GamePiece:
     
     def __repr__(self):
         return self.label
+
     
 class Worker(GamePiece):
 
@@ -21,16 +22,19 @@ class Worker(GamePiece):
 
     def can_move(self):
         
-        return self.generate_valid_moves(self.coords) != []
+        return self.generate_valid_moves() != []
 
-    def generate_valid_moves(self, coords):
+    def generate_valid_moves(self):
         valid_moves : [Move]  = []
 
-        valid_worker_movements = self.board.generate_valid_move_dirs(coords)
+        valid_worker_movements = self.board.generate_valid_move_dirs(self.coords)
+
         for vw in valid_worker_movements:
-            valid_worker_builds = self.board.generate_valid_build_dirs([sum(x) for x in zip(coords, TEXT_DIR_TO_NUM[vw])])
+            valid_worker_builds = self.board.generate_valid_build_dirs([sum(x) for x in zip(self.coords, TEXT_DIR_TO_NUM[vw])])
             for vb in valid_worker_builds:
-                valid_moves.append(Move(self, vw, vb))
+                added_move = Move(self, vw, vb)
+                added_move.get_move_score()
+                valid_moves.append(added_move)
 
         return valid_moves
     
@@ -39,6 +43,9 @@ class Worker(GamePiece):
             return True
         else:
             return False
+        
+    def __deepcopy__(self, memo):
+        return Worker(self.label, self.owner, self.coords, board=None)
 
     # def generate_valid_moves(self) -> [Move]:
         
