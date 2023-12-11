@@ -143,7 +143,7 @@ class Board:
             if (0 <= new_r < ROW_COUNT and 
                 0 <= new_c < COLUMN_COUNT and 
                 self.board[new_r][new_c].piece == None and
-                self.board[new_r][new_c].height <= DOME_HEIGHT
+                self.board[new_r][new_c].height < DOME_HEIGHT
                 ):  
                 
                 valid_piece_build_dirs.append(dir_str)
