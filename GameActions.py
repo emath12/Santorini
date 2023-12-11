@@ -135,8 +135,8 @@ class MoveScore:
         return self.c1*self.height_score + self.c2*self.center_score + self.c3*self.distance_score
         
     def __str__(self) -> str:
-        return f"({self.height_score} {self.center_score} {self.distance_score})"
+        return f"({self.height_score}, {self.center_score}, {self.distance_score})"
     def __repr__(self) -> str:
-        return f"({self.height_score} {self.center_score} {self.distance_score})"
+        return f"({self.height_score}, {self.center_score}, {self.distance_score})"
     
     
