@@ -37,6 +37,7 @@ class Santorini:
         self.enabled_display_score = enabled_display_score
 
         self.players = []
+        self.history = History()
 
         if player_1_type == PlayerType.HUMAN:
             self.players.append(Player(board=self.board, color="white", workers=[self.worker_A, self.worker_B]))
@@ -75,6 +76,14 @@ class Santorini:
             print(self.current_player.score)
         else:
             print(self.current_turn)
+
+        if self.undo_redo_enabled:
+            undo = input("undo, redo or next\n")
+
+            if undo == "redo":
+                self.restore()
+            # elif undo == "undo":
+            #     self.
 
     def play(self):
         self.current_turn = Turn(
@@ -120,13 +129,13 @@ class Santorini:
                       enabled_display_score=self.enabled_display_score
             )
 
-            s.play()
             Turn.current_turn = 1
+            s.play()
         else:
             sys.exit()
 
     def save(self):
-        SantoriniState(
+        s = SantoriniState(
             player_1_type=self.player_1_type,
             player_2_type=self.player_2_type,
             current_turn=self.current_turn.current_turn,
@@ -141,8 +150,17 @@ class Santorini:
             worker_B=self.worker_B
         )
 
-    def restore():
-        pass
+        self.history.push(s)
+
+    def restore(self):
+        s : SantoriniState = self.history.pop()
+
+        self.board = s.board
+        self.current_player = s.current_player
+        self.worker_A = s.worker_A
+        self.worker_B = s.worker_B
+        self.worker_Z = s.worker_Z
+        self.worker_Y = s.worker_Y
 
     def __deepcopy__(self, memo):
         

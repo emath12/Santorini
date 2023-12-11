@@ -47,9 +47,14 @@ class History:
 
     def __init__(self) -> None:
         self.history = []
+        self.history_index = 0
 
     def pop(self):
-        return self.history.pop()
+        state = self.history.pop(self.history_index)
+
+        self.history_index -= 1 
+
+        return state
     
     def push(self, san):
         self.history.push(san)
