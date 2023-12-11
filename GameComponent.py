@@ -21,7 +21,7 @@ class BoardSquare:
         self.height = height
 
     def build_level(self):
-        if self.height < 3:
+        if self.height < 4:
             self.height += 1 
 
     def __str__(self):
@@ -209,14 +209,6 @@ class Board:
                 new_board[r, c] = copy.deepcopy(self.board[r][c], memo)
                 if self.board[r][c].piece:
                     new_board[r, c].piece.board = new_board
-
-        
-
-            # if self.board[row][col].piece:
-            #     new_board[row, col].piece = copy.deepcopy(self.board[row][col].piece)
-            #     new_board[row, col].piece.coords = self.board[row][col].piece.coords
-
-            # new_board[row, col].height = self.board[row][col].height
 
         new_board.row_ind = self.row_ind
         new_board.col_ind = self.col_ind
