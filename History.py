@@ -8,11 +8,7 @@ class SantoriniState:
             current_turn, 
             current_color,
             current_player, 
-            player_1_type, 
-            player_2_type,
             players,
-            undo_redo_enabled,
-            enabled_display_score,
             worker_Y,
             worker_Z,
             worker_A,
@@ -22,10 +18,6 @@ class SantoriniState:
             self.new_board = copy.deepcopy(board)
             
             self.current_turn : int = current_turn
-            self.player_1_type = player_1_type
-            self.player_2_type = player_2_type
-            self.undo_redo_enabled = undo_redo_enabled
-            self.enabled_display_score = enabled_display_score
 
             self.players = copy.deepcopy(players)
 

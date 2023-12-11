@@ -1,4 +1,4 @@
-from GamePiece import Worker, GamePiece
+from GamePiece import Worker
 from constants import COLUMN_COUNT, ROW_COUNT, TEXT_DIR_TO_NUM, MAX_HEIGHT, DOME_HEIGHT
 from enum import Enum
 from GameActions import Move

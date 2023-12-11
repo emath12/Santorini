@@ -162,5 +162,11 @@ class RandomPlayer(Player):
                 valid_moves = self.workers[0].generate_valid_moves()
 
         
-        return random.choice(valid_moves)
+        made_move =  random.choice(valid_moves)
+
+        self.board.move_worker(made_move.worker, made_move.move_dir)
+        self.board.build(made_move.worker, made_move.build_dir)
+
+        return made_move
+
     

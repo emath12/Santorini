@@ -1,25 +1,15 @@
 from constants import TEXT_DIR_TO_NUM
 from GameActions import Move
 
-class GamePiece:
-    def __init__(self, label, owner, coords, board) -> None:
+    
+class Worker:
+
+    def __init__(self, label, owner, coords, board=None):
+        self.board=board
         self.label = label
         self.owner = owner
         self.coords = coords
-        self.board = board
-
-    def __str__(self):
-        return self.label
     
-    def __repr__(self):
-        return self.label
-
-    
-class Worker(GamePiece):
-
-    def __init__(self, label, owner, coords, board=None):
-        super().__init__(label=label, owner=owner, coords=coords, board=board)
-
     def can_move(self):
         
         return self.generate_valid_moves() != []
@@ -46,6 +36,12 @@ class Worker(GamePiece):
         
     def __deepcopy__(self, memo):
         return Worker(self.label, self.owner, self.coords, board=None)
+    
+    def __str__(self):
+        return self.label
+    
+    def __repr__(self):
+        return self.label
 
     # def generate_valid_moves(self) -> [Move]:
         

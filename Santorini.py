@@ -147,14 +147,10 @@ class Santorini:
     def _get_state(self):
         s = SantoriniState(
             
-            player_1_type=self._player_1_type,
-            player_2_type=self._player_2_type,
-            current_turn=self._current_turn.current_turn,
+            current_turn=Turn.current_turn,
             current_player=copy.deepcopy(self._current_player),
             players=copy.deepcopy(self._players),
             board=copy.deepcopy(self.board),
-            undo_redo_enabled=self._undo_redo_enabled,
-            enabled_display_score=self._enabled_display_score,
             worker_Y=copy.deepcopy(self._worker_Y),
             worker_A=copy.deepcopy(self._worker_A),
             worker_Z=copy.deepcopy(self._worker_Z),
