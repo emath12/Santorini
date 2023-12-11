@@ -31,7 +31,6 @@ class Move:
         self.num_move_dir = TEXT_DIR_TO_NUM[move_dir]
         self.num_build_dir = TEXT_DIR_TO_NUM[build_dir]
         self.move_score = 0
-        self.winning_move = False
 
     def get_move_score(self):
         self.move_score = MoveScore(self)
@@ -46,6 +45,8 @@ class MoveScore:
         self.height_score = None
         self.center_score = None
         self.distance_score = None
+        self.winning_move = False
+
 
         self.c1 = 3
         self.c2 = 2
@@ -139,5 +140,7 @@ class MoveScore:
         return f"({self.height_score}, {self.center_score}, {self.distance_score})"
     def __repr__(self) -> str:
         return f"({self.height_score}, {self.center_score}, {self.distance_score})"
+    
+    
     
     

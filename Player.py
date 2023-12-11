@@ -16,7 +16,7 @@ class Player:
         self.board : Board = board
         self.color : str = color
         self.workers : [Worker] = workers
-        self.score = self.get_my_score()
+        self.score = None
 
     def check_can_move(self):
         
@@ -135,9 +135,14 @@ class HeurisiticPlayer(Player):
         for worker in self.workers:
             valid_moves += worker.generate_valid_moves()
         
-        best_moves = sorted(valid_moves, key=lambda move : move.move_score, reverse=True)
+        best_moves = sorted(valid_moves, key=lambda move : move.move_score.get_move_score(), reverse=True)
         
-        return best_moves[0]
+        made_move = best_moves[0]
+
+        self.board.move_worker(made_move.worker, made_move.move_dir)
+        self.board.build(made_move.worker, made_move.build_dir)
+
+        return made_move
 
 class RandomPlayer(Player):
 

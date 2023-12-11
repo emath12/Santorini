@@ -78,12 +78,15 @@ class Santorini:
             print(self.current_turn)
 
         if self.undo_redo_enabled:
-            undo = input("undo, redo or next\n")
+            undo = input("undo, redo, or next\n")
 
             if undo == "redo":
-                self.restore()
-            # elif undo == "undo":
-            #     self.
+                self.restore(self.history.pop_redos())
+                self.print_round()
+            elif undo == "undo":
+                self.history.push_redos(self.get_state())
+                self.restore(self.history.pop_history())
+                self.print_round()
 
     def play(self):
         self.current_turn = Turn(
@@ -91,7 +94,6 @@ class Santorini:
         )
 
         self.current_player : Player = self.players[0]
-        # self.print_round()
         
         while True:            
 
@@ -99,6 +101,7 @@ class Santorini:
 
             if self.isWinner()[0]:
                 break
+            self.save()
 
             made_move = self.current_player.make_move()
 
@@ -134,28 +137,37 @@ class Santorini:
         else:
             sys.exit()
 
-    def save(self):
+    def get_state(self):
         s = SantoriniState(
+            
             player_1_type=self.player_1_type,
             player_2_type=self.player_2_type,
             current_turn=self.current_turn.current_turn,
             current_player=self.current_player,
-            players=self.players,
-            board=self.board,
+            players=copy.deepcopy(self.players),
+            board=copy.deepcopy(self.board),
             undo_redo_enabled=self.undo_redo_enabled,
             enabled_display_score=self.enabled_display_score,
-            worker_Y=self.worker_Y,
-            worker_A=self.worker_A,
-            worker_Z=self.worker_Z,
-            worker_B=self.worker_B
+            worker_Y=copy.deepcopy(self.worker_Y),
+            worker_A=copy.deepcopy(self.worker_A),
+            worker_Z=copy.deepcopy(self.worker_Z),
+            worker_B=copy.deepcopy(self.worker_B)
         )
 
-        self.history.push(s)
+        return s
 
-    def restore(self):
-        s : SantoriniState = self.history.pop()
+    def save(self):
 
-        self.board = s.board
+        self.history.push_history(self.get_state())
+        
+    def restore(self, san):
+
+        s : SantoriniState = san
+
+        if not s:
+            return
+
+        self.board = s.new_board
         self.current_player = s.current_player
         self.worker_A = s.worker_A
         self.worker_B = s.worker_B

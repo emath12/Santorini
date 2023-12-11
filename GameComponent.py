@@ -79,7 +79,7 @@ class Board:
         self.board[3][1].piece = self.worker_A
         self.board[3][3].piece = self.worker_Z 
 
-
+  
     def move_worker(self, worker, d):
 
         if d == "-":
