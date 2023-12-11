@@ -122,6 +122,7 @@ class Board:
                 and 0 <= new_c < COLUMN_COUNT
                 and self.board[new_r][new_c].height <= MAX_HEIGHT
                 and self.board[r][c].height - self.board[new_r][new_c].height <= 1
+                and self.board[r][c].height - self.board[new_r][new_c].height >= -1
                 and not self.board[new_r][new_c].piece
             ):
                 
