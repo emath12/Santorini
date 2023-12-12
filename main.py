@@ -1,6 +1,5 @@
 import Santorini as s
 import argparse
-from GameComponent import Worker, Board
 from enum import Enum
 from Player import PlayerType
 

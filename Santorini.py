@@ -17,8 +17,9 @@ from Player import PlayerType
 import copy
 import sys
 from History import SantoriniState, History 
+from main import PlayGame 
 
-class Santorini:
+class Santorini(PlayGame):
 
     def __init__(self, player_1_type, player_2_type, undo_redo_enabled=False, enabled_display_score=False): 
 
