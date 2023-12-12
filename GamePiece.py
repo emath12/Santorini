@@ -9,12 +9,20 @@ class Worker:
         self.label = label
         self.owner = owner
         self.coords = coords
-    
+
     def can_move(self):
+        """
+        Checks if the given worker can move, by checking if it
+        has any valid moves.
+        """
         
         return self.generate_valid_moves() != []
 
     def generate_valid_moves(self):
+        """
+        Generates the valid moves a worker can make. Returns an array of 
+        move objects.
+        """
         valid_moves : [Move]  = []
 
         valid_worker_movements = self.board.generate_valid_move_dirs(self.coords)

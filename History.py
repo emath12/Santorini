@@ -49,15 +49,27 @@ class History:
         self.redos = []
 
     def pop_redos(self):
+        """
+        Gets the most recent undo
+        """
+        
         if not self.redos:
             return None 
 
         return self.redos.pop()
     
     def push_redos(self, san):
+        """
+        Adds an undo to the redo stack
+        """
+
         self.redos.append(san)
 
     def pop_history(self):
+        """
+        Pops the most recent action off the stack and returns a
+        SantoriniState object.
+        """
 
         if not self.history:
             return None
@@ -65,4 +77,8 @@ class History:
         return self.history.pop()
     
     def push_history(self, san):
+        """
+        Adds a state of the game to the stack.
+        """
+
         self.history.append(san)

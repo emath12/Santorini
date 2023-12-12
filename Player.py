@@ -19,6 +19,9 @@ class Player:
         self.score = None
 
     def check_can_move(self):
+        """
+        Checks if any of the workers of the player can move.
+        """
         
         for worker in self.workers:
             if worker.can_move():
@@ -27,13 +30,21 @@ class Player:
         return False
     
     def get_my_score(self):
+        """
+        Gets the current score of the pieces on the board for the given player.
+        """
+
+        # configures a move object that doesn't actually change the configuration of the board
+        # then it fetches the move score the board through that and sets it as the player's score.
         snapshot_move = Move(self.workers[0], "-", "-")
         snapshot_move_score = snapshot_move.get_move_score()
         self.score = snapshot_move_score
         return snapshot_move_score
     
     def make_move(self) -> Move:
-
+        """
+        Player makes their move upon this being called
+        """
         invalid_worker = True
         invalid_move_dir = True
         invalid_build_dir = True

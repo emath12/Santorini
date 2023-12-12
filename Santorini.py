@@ -61,13 +61,13 @@ class Santorini(PlayGame):
     def _isWinner(self):
 
         if not any(worker.can_move() for worker in self._current_player.workers):
-            return [True, None]
+            return True
 
         for index, ele in self.board:
             if ele.height == 3 and ele.piece:
-                return [True, ele.piece.owner]
+                return True
         
-        return [False, None]
+        return False
     
     def _print_round(self):
         
@@ -92,19 +92,19 @@ class Santorini(PlayGame):
                 self._print_round()
 
     def play(self):
+        """
+        Intiates the confused game of Santorini3
+        """
         
-        # self._current_turn = Turn(
-        #     player=self._players[0], 
-        # )
-
         self._current_player : Player = self._players[0]
         
         while True:            
 
             self._print_round()
 
-            if self._isWinner()[0]:
+            if self._isWinner():
                 break
+
             self._save()
 
             made_move = self._current_player.make_move()
@@ -117,11 +117,9 @@ class Santorini(PlayGame):
 
             if self._current_player.color == "blue":
                 Turn.color = "white"
-                # self._current_turn = Turn(player=self._players[0])
                 self._current_player = self._players[0]
             else:
                 Turn.color = "blue"
-                # self._current_turn = Turn(player=self._players[1])
                 self._current_player = self._players[1]
 
             Turn.current_turn += 1

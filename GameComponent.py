@@ -21,6 +21,9 @@ class BoardSquare:
         self.height = height
 
     def build_level(self):
+        """
+        Increases the level that the boardsquare has.
+        """
         if self.height < 4:
             self.height += 1 
 
@@ -110,10 +113,9 @@ class Board:
         r, c = coords
         valid_piece_move_dirs = []
 
-        directions = [(1, 0, "s"), (-1, 0, "n"), (0, -1, "w"), (0, 1, "e")]
-        diagonals = [(-1, 1, "ne"), (-1, -1, "nw"), (1, -1, "sw"), (1, 1, "se")]
+        directions = [(1, 0, "s"), (-1, 0, "n"), (0, -1, "w"), (0, 1, "e"), (-1, 1, "ne"), (-1, -1, "nw"), (1, -1, "sw"), (1, 1, "se")]
 
-        for dr, dc, dir_str in directions + diagonals:
+        for dr, dc, dir_str in directions:
             
             new_r, new_c = r + dr, c + dc
 
@@ -134,10 +136,9 @@ class Board:
         r, c = coords
         valid_piece_build_dirs = []
 
-        directions = [(1, 0, "s"), (-1, 0, "n"), (0, 1, "e"), (0, -1, "w")]
-        diagonals = [(-1, 1, "ne"), (-1, -1, "nw"), (1, -1, "sw"), (1, 1, "se")]
+        directions = [(1, 0, "s"), (-1, 0, "n"), (0, 1, "e"), (0, -1, "w"), (-1, 1, "ne"), (-1, -1, "nw"), (1, -1, "sw"), (1, 1, "se")]
 
-        for dr, dc, dir_str in directions + diagonals:
+        for dr, dc, dir_str in directions:
             new_r, new_c = r + dr, c + dc
 
             if (0 <= new_r < ROW_COUNT and 

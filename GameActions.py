@@ -9,13 +9,10 @@ class Turn:
         "white" : "AB"
     }
 
-    def __init__(self, color=None) -> None:
-        # Turn.player : 'Player' = player
-        
+    def __init__(self, color=None) -> None:        
         Turn.color = color
 
     def __repr__(self):
-        
         return f"Turn: {Turn.current_turn}, {Turn.color} ({Turn.avail_workers[Turn.color]})"
 
 class Move:
@@ -28,6 +25,9 @@ class Move:
         self.move_score = 0
 
     def get_move_score(self):
+        """
+        Produces a move score object from the given move.
+        """
         self.move_score = MoveScore(self)
         return self.move_score
 
@@ -37,15 +37,14 @@ class Move:
 class MoveScore:
     def __init__(self, move: Move):
 
-        self.height_score = None
-        self.center_score = None
-        self.distance_score = None
-        self.winning_move = False
+        self._height_score = None
+        self._center_score = None
+        self._distance_score = None
+        self._winning_move = False
 
-
-        self.c1 = 3
-        self.c2 = 2
-        self.c3 = 1
+        self._c1 = 3
+        self._c2 = 2
+        self._c3 = 1
 
         new_board = copy.deepcopy(move.worker.board)
         new_moved_worker = copy.deepcopy(move.worker)
@@ -53,43 +52,43 @@ class MoveScore:
         new_board.move_worker(new_moved_worker, move.move_dir)
         new_board.build(new_moved_worker, move.build_dir)
 
-        self.my_other_worker = None
-        self.enemy_workers = []
+        my_other_worker = None
+        enemy_workers = []
 
 
         if move.worker.label == "A":
-            self.my_other_worker = new_board.worker_B
-            self.enemy_workers.append(new_board.worker_Z)
-            self.enemy_workers.append(new_board.worker_Y)
+            my_other_worker = new_board.worker_B
+            enemy_workers.append(new_board.worker_Z)
+            enemy_workers.append(new_board.worker_Y)
         elif move.worker.label == "B":
-            self.my_other_worker = new_board.worker_A
-            self.enemy_workers.append(new_board.worker_Z)
-            self.enemy_workers.append(new_board.worker_Y)
+            my_other_worker = new_board.worker_A
+            enemy_workers.append(new_board.worker_Z)
+            enemy_workers.append(new_board.worker_Y)
         elif move.worker.label == "Y":
-            self.my_other_worker = new_board.worker_Z
-            self.enemy_workers.append(new_board.worker_A)
-            self.enemy_workers.append(new_board.worker_B)
+            my_other_worker = new_board.worker_Z
+            enemy_workers.append(new_board.worker_A)
+            enemy_workers.append(new_board.worker_B)
         else:
-            self.my_other_worker = new_board.worker_Y
-            self.enemy_workers.append(new_board.worker_A)
-            self.enemy_workers.append(new_board.worker_B)
+            my_other_worker = new_board.worker_Y
+            enemy_workers.append(new_board.worker_A)
+            enemy_workers.append(new_board.worker_B)
 
         def calculate_height_score():
 
             height_score = 0
 
-            for worker in [new_moved_worker, self.my_other_worker]:
+            for worker in [new_moved_worker, my_other_worker]:
                 height_score += new_board[worker.coords].height
 
             return height_score
     
-        self.height_score = calculate_height_score()
+        self._height_score = calculate_height_score()
 
         def calculate_center_score():
             
             center_score = 0
 
-            for worker in [new_moved_worker, self.my_other_worker]:
+            for worker in [new_moved_worker, my_other_worker]:
 
                 if worker.coords == [2, 2]:
                     center_score += 2 
@@ -100,7 +99,7 @@ class MoveScore:
 
             return center_score
         
-        self.center_score = calculate_center_score()
+        self._center_score = calculate_center_score()
 
         def calculate_distance_score():
 
@@ -110,31 +109,34 @@ class MoveScore:
                 return max(abs(x1 - x2), abs(y1 - y2))
 
             distance_score = min(
-                chebyshev_distance(new_moved_worker.coords, self.enemy_workers[0].coords),
-                chebyshev_distance(self.my_other_worker.coords, self.enemy_workers[0].coords),
+                chebyshev_distance(new_moved_worker.coords, enemy_workers[0].coords),
+                chebyshev_distance(my_other_worker.coords, enemy_workers[0].coords),
             ) + min (
-                chebyshev_distance(new_moved_worker.coords, self.enemy_workers[1].coords),
-                chebyshev_distance(self.my_other_worker.coords, self.enemy_workers[1].coords),
+                chebyshev_distance(new_moved_worker.coords, enemy_workers[1].coords),
+                chebyshev_distance(my_other_worker.coords, enemy_workers[1].coords),
             )
 
             distance_score = 8 - distance_score
 
             return distance_score
         
-        self.distance_score = calculate_distance_score()
+        self._distance_score = calculate_distance_score()
 
         if new_board[new_moved_worker.coords].height == 3:
-            self.winning_move = True
+            self._winning_move = True
 
     def get_move_score(self):
-        if self.winning_move:
+        """
+        Returns the calculated move score for the passed move.
+        """
+        if self._winning_move:
             return float("+inf")
-        return self.c1*self.height_score + self.c2*self.center_score + self.c3*self.distance_score
+        return self._c1*self._height_score + self._c2*self._center_score + self._c3*self._distance_score
         
     def __str__(self) -> str:
-        return f"({self.height_score}, {self.center_score}, {self.distance_score})"
+        return f"({self._height_score}, {self._center_score}, {self._distance_score})"
     def __repr__(self) -> str:
-        return f"({self.height_score}, {self.center_score}, {self.distance_score})"
+        return f"({self._height_score}, {self._center_score}, {self._distance_score})"
     
     
     
